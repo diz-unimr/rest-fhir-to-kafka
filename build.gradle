@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
     id( 'com.diffplug.spotless') version "7.0.3"
+    id 'jacoco'
 }
 group = 'de.unimarburg.diz'
 version = '0.0.1-SNAPSHOT'
@@ -32,6 +33,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 spotless {
     java {
         importOrder()
@@ -41,4 +43,28 @@ spotless {
         cleanthat()
         licenseHeader '/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)$YEAR */'
     }
+}
+
+
+jacoco {
+    toolVersion = "0.8.12"
+    reportsDirectory = layout.buildDirectory.dir('jacoco-reports')
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+    }
+}
+
+tasks.named('bootBuildImage') {
+    environment = [
+            "BP_OCI_SOURCE":"https://github.com/diz-unimr/rest-fhir-to-kafka",
+            "BP_OCI_LICENSES": "AGPLv3",
+            "BP_OCI_DESCRIPTION": "Accept FHIR data via REST endpoint. Produces as JSON data to Kafka topic",
+            "BP_OCI_AUTHORS": "Jakub Lidke",
+            "BP_JVM_VERSION": "21",
+            "BP_OCI_VENDOR":"Datenintegrationszentrum Fachbereich Medizin Philipps Universität Marburg"
+    ]
 }

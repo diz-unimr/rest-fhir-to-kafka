@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2025 */
 package de.unimarburg.diz.rest_fhir_to_kafka.input;
 
+import ca.uhn.fhir.parser.DataFormatException;
 import de.unimarburg.diz.rest_fhir_to_kafka.ProcessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,16 @@ public class RestFhirController {
 
   @PostMapping("/fhirIn")
   public ResponseEntity<String> receiveFhirData(@RequestBody String data) {
-    log.debug("received data: {%s}".formatted(data));
-
-    if (!manager.transformAndProduce(data)) {
-      throw new RuntimeException("data could not be proccessed");
+    log.debug("receiving data starting with: %s...".formatted(data.substring(0, 20)));
+    boolean wasSuccessful;
+    try {
+      wasSuccessful = !manager.transformAndProduce(data);
+    } catch (DataFormatException dataFormatException) {
+      log.error("processing data failed");
+      return ResponseEntity.badRequest().body(dataFormatException.getLocalizedMessage());
+    }
+    if (wasSuccessful) {
+      throw new RuntimeException("data could not be processed");
     }
 
     return ResponseEntity.accepted().build();

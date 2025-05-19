@@ -11,12 +11,10 @@ spring:
           level: 9
       retries: 3
       security:
-        protocol: SSL
+        protocol: PLAINTEXT
       client-id: test-rest-to-kafka
 
 logging:
   level:
     root: "warn"
-
-server:
-  port: 8081
+    de.unimarburg: "debug"

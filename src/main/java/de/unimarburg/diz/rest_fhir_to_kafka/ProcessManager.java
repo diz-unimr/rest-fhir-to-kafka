@@ -24,6 +24,7 @@ public class ProcessManager {
     log.debug("received data string");
     final var asJson = transformXmlToJson(data);
     log.debug("data transformed to json");
+
     if (producer.sendTopic(asJson)) {
       return true;
     }
@@ -38,6 +39,7 @@ public class ProcessManager {
     var transformedResource = newXmlParser.parseResource(data);
 
     var asJson = jsonParser.encodeResourceToString(transformedResource);
+
     return asJson;
   }
 }
