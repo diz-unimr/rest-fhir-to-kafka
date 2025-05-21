@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,12 @@ public class RestFhirController {
     this.manager = manager;
   }
 
-  @PostMapping("/fhirIn")
+  @GetMapping("/fhir")
+  public ResponseEntity checkConnect() {
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/fhir")
   public ResponseEntity<String> receiveFhirData(@RequestBody String data) {
     if (data == null || data.isEmpty()) {
       final BodyBuilder bodyBuilder = ResponseEntity.badRequest();
