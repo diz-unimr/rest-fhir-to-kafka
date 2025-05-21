@@ -6,6 +6,7 @@ import de.unimarburg.diz.rest_fhir_to_kafka.ProcessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,14 @@ public class RestFhirController {
 
   @PostMapping("/fhirIn")
   public ResponseEntity<String> receiveFhirData(@RequestBody String data) {
-    log.debug("receiving data starting with: %s...".formatted(data.substring(0, 20)));
+    if (data == null || data.isEmpty()) {
+      final BodyBuilder bodyBuilder = ResponseEntity.badRequest();
+      bodyBuilder.body("no data provided - please send FHIR XML for processing");
+      return bodyBuilder.build();
+    }
+    log.debug(
+        "receiving data starting with: %s..."
+            .formatted(data.substring(0, Math.min(data.length(), 20))));
     boolean wasSuccessful;
     try {
       wasSuccessful = !manager.transformAndProduce(data);

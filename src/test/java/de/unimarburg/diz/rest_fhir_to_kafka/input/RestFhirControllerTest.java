@@ -1,7 +1,6 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2025 */
 package de.unimarburg.diz.rest_fhir_to_kafka.input;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,5 +36,15 @@ class RestFhirControllerTest {
     mockMvc
         .perform(post("/fhirIn").contentType(APPLICATION_XML_VALUE).content(xmlResource))
         .andExpect(status().isAccepted());
+  }
+
+  @Test
+  void receiveFhirErrorData() throws Exception {
+
+    var xmlResource = "<<<>>";
+
+    mockMvc
+        .perform(post("/fhirIn").contentType(APPLICATION_XML_VALUE).content(xmlResource))
+        .andExpect(status().isBadRequest());
   }
 }
