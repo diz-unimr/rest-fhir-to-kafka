@@ -3,6 +3,7 @@ package de.unimarburg.diz.rest_fhir_to_kafka;
 
 import ca.uhn.fhir.context.FhirContext;
 import de.unimarburg.diz.rest_fhir_to_kafka.output.ToTopicProducer;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,24 +23,32 @@ public class ProcessManager {
 
   public boolean transformAndProduce(String data) {
     log.debug("received data string");
-    final var asJson = transformXmlToJson(data);
-    log.debug("data transformed to json");
 
-    if (producer.sendTopic(asJson)) {
+    // should be xml
+    final var transformedResource = dataToResource(data);
+    final var resourceAsJson = transformToJson(transformedResource);
+
+    if (producer.sendTopic(resourceAsJson)) {
       return true;
     }
 
     return false;
   }
 
-  private String transformXmlToJson(String data) {
-    var newXmlParser = fhirContext.newXmlParser();
+  private String transformToJson(IBaseResource resource) {
+
     var jsonParser = fhirContext.newJsonParser();
+    var asJson = jsonParser.encodeResourceToString(resource);
+
+    log.debug("resource encoded to json");
+    return asJson;
+  }
+
+  private IBaseResource dataToResource(String data) {
+    var newXmlParser = fhirContext.newXmlParser();
 
     var transformedResource = newXmlParser.parseResource(data);
-
-    var asJson = jsonParser.encodeResourceToString(transformedResource);
-
-    return asJson;
+    log.debug("data transformed to resource");
+    return transformedResource;
   }
 }
