@@ -34,7 +34,7 @@ class RestFhirControllerTest {
                 .addName(new HumanName().addGiven("Lana").setFamily("Musterfrau")));
 
     mockMvc
-        .perform(post("/fhirIn").contentType(APPLICATION_XML_VALUE).content(xmlResource))
+        .perform(post("/fhir").contentType(APPLICATION_XML_VALUE).content(xmlResource))
         .andExpect(status().isAccepted());
   }
 
@@ -44,7 +44,7 @@ class RestFhirControllerTest {
     var xmlResource = "<<<>>";
 
     mockMvc
-        .perform(post("/fhirIn").contentType(APPLICATION_XML_VALUE).content(xmlResource))
+        .perform(post("/fhir").contentType(APPLICATION_XML_VALUE).content(xmlResource))
         .andExpect(status().isBadRequest());
   }
 }
