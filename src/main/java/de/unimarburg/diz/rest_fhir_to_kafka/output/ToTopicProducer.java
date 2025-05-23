@@ -30,17 +30,13 @@ public class ToTopicProducer {
     log.debug("created 'ToTopicProducer'");
   }
 
-  private String getNextKey() {
-    return String.valueOf(msgCount++);
-  }
-
-  public boolean sendTopic(String data) {
+  public boolean sendTopic(String id, String data) {
 
     Map<String, Object> headermap = new HashMap<>();
     headermap.put(KafkaHeaders.TOPIC, "produce-to-topic");
     // KafkaHeaders.PARTITION
-    final String currentKey = getNextKey();
-    headermap.put(KafkaHeaders.KEY, currentKey);
+
+    headermap.put(KafkaHeaders.KEY, id);
     headermap.put(KafkaHeaders.TIMESTAMP, Date.from(Instant.now()).getTime());
 
     var msg = MessageBuilder.createMessage(data, new MessageHeaders(headermap));
@@ -51,7 +47,7 @@ public class ToTopicProducer {
         (result, ex) -> {
           if (ex == null) {
             try {
-              handleSuccess(currentKey, future.get().getRecordMetadata());
+              handleSuccess(id, future.get().getRecordMetadata());
             } catch (InterruptedException e) {
               throw new RuntimeException(e);
             } catch (ExecutionException e) {

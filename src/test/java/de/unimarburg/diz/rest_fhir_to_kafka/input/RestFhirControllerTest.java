@@ -40,7 +40,7 @@ class RestFhirControllerTest {
                 .setActive(true)
                 .addName(new HumanName().addGiven("Lana").setFamily("Musterfrau")));
 
-    when(toTopicProducer.sendTopic(any())).thenReturn(true);
+    when(toTopicProducer.sendTopic(any(), any())).thenReturn(true);
 
     mockMvc
         .perform(post("/fhir").contentType(APPLICATION_XML_VALUE).content(xmlResource))

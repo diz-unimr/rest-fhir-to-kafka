@@ -13,7 +13,8 @@ spring:
       security:
         protocol: SSL
       client-id: test-rest-to-kafka
-
+app:
+  id-salt: "5fd7b89ace314e810e565e3827c11c23"
 logging:
   level:
     root: "warn"
