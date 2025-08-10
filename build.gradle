@@ -18,7 +18,7 @@ repositories {
     mavenCentral()
 }
 
-def versions = ['hapi-fhir': '7.6.0']
+def versions = ['hapi-fhir': '7.6.1']
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
